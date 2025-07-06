@@ -1,7 +1,5 @@
-![Statuscord Banner](img/banner.png)
-
 <div id="NanduBit" align="center">
-    <h1>Statuscord</h1>
+    <h1>Statuscord - Python</h1>
     <p>Make Your Discord Account 24/7 Online with Custom Status!</p>
     <a href="https://github.com/NanduBit/Status-Discord/blob/main/LICENSE"><img src="https://img.shields.io/github/license/NanduBit/Status-Discord?style=for-the-badge"></a>
     <a href="https://github.com/NanduBit"><img src="https://img.shields.io/badge/GITHUB-NanduBit-7289DA?style=for-the-badge"></a>
@@ -113,3 +111,5 @@ Special thanks to [SealedSaucer](https://github.com/SealedSaucer/Statuscord) for
 
 <p align="center">Made with ❤️ by <a href="https://github.com/NanduBit">NanduBit</a></p>
 <p align="center">Statuscord is licensed under GNU General Public License</p>
+
+![Statuscord Banner](img/banner.png)
