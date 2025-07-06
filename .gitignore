@@ -45,5 +45,4 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-config.py
 *.log
