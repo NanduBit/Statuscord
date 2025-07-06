@@ -52,11 +52,11 @@ def set_default_activity():
     if config.ACTIVITY_TYPE == discord.ActivityType.streaming:
         activity = discord.Streaming(name=config.ACTIVITY["name"], url=config.ACTIVITY["url"])
     elif config.ACTIVITY_TYPE == discord.ActivityType.playing:
-        activity = discord.Game(name=config.ACTIVITY["name"], type=config.ACTIVITY_TYPE)
+        activity = discord.Game(config.ACTIVITY["name"])
     else:
         warn_text = Text(f"Unsupported activity type '{config.ACTIVITY_TYPE}', defaulting to game activity.", style=Style(color="#7289DA", bold=True))
         console.print(warn_text)
-        activity = discord.Game(name=config.ACTIVITY["name"], type=config.ACTIVITY_TYPE)
+        activity = discord.Game(config.ACTIVITY["name"])
 
     if config.STATUS not in [discord.Status.online, discord.Status.idle, discord.Status.dnd, discord.Status.invisible]:
         warn_text = Text(f"Invalid status '{config.STATUS}', defaulting to online.", style=Style(color="#7289DA", bold=True))
@@ -83,10 +83,14 @@ def prompt_activity_setup():
     # Centered input prompt
     console.print(" " * 35 + "> ", end="", style="#7289DA")
     choice = input().strip()
+    
+    # Store the activity configuration
+    activity = ''
+    
     if choice == "" or choice == "1":
-        return set_default_activity()
+        activity = set_default_activity()
     elif choice == "2":
-        # Ask for status first
+        # Ask for status
         console.print(
             "[bold #7289DA]Select status:[/bold #7289DA]",
             justify="center"
@@ -105,15 +109,27 @@ def prompt_activity_setup():
             "4": discord.Status.invisible
         }
         if status_num not in status_map:
+            config.STATUS = discord.Status.online
             console.print(
                 Text("Status code set to Online.\n", style="#99AAB5"),
                 justify="center"
             )
         else:
-            chosen_status = status_map.get(status_num, discord.Status.online)
+            console.print(
+                    "[#FFCC00]Due to an unfixable bug which I belive is unfixable by me,\n any status other than online will lead to an error.\n Threfore, status is set to online.[/]",
+                    justify="center"
+                )
+            chosen_status = discord.Status.online 
+            # chosen_status = status_map[status_num]
+            if chosen_status == discord.Status.invisible:
+                console.print(
+                    "[#FFCC00]Having Invisible Status will not show your activity, it is same as being offline :)[/]",
+                    justify="center"
+                )
+                exit(0)
             config.STATUS = chosen_status
             console.print(
-                f"[#99AAB5]Status code set to {chosen_status}.\n[/]",
+                f"[#99AAB5]Status code set to {chosen_status.name.capitalize()}.\n[/]",
                 justify="center"
             )
 
@@ -152,7 +168,7 @@ def prompt_activity_setup():
                 "[#FFCC00]Blank value passed to activity name.\nThis means no activity will be shown on your profile.\nOnly inputed status will show and the account will\nstay online as long as this code is running.\n[/]",
                 justify="center"
             )
-            activity = discord.Game(name=act_name, type=act_type)
+            
 
         console.print(
             f"[#99AAB5]ActivityName set to: {act_name}.\n[/]",
@@ -166,11 +182,12 @@ def prompt_activity_setup():
             act_url = input().strip()
             
             # Check if URL is a valid Twitch URL
-            if "twitch.tv/" not in act_url:
+            if "https://twitch.tv/" not in act_url:
                 console.print(
                     "[#FFCC00]A valid Twitch URL (e.g., https://twitch.tv/yourname)\nmust be entered for streaming activity to display correctly.[/]",
                     justify="center"
                 )
+                exit(0)
                 
             console.print(
                 f"[#99AAB5]Stream URL is set to: {act_url}\n[/]",
@@ -178,22 +195,33 @@ def prompt_activity_setup():
             )
             activity = discord.Streaming(name=act_name, url=act_url)
         else:
-            activity = discord.Game(name=act_name, type=act_type)
-
-        return activity
+            activity = discord.Game(act_name)
     else:
         console.print("[#FFCC00]Invalid input, using default activity settings.\n[/]", justify="center")
-        return set_default_activity()
+        activity = set_default_activity()
+
+    return activity
 
 @client.event
 async def on_ready():
+    console.print("\n[bold #7289DA]Connection established! Setting up your activity...[/bold #7289DA]", justify="center")
     activity = prompt_activity_setup()
 
-    await client.change_presence(
-        status=config.STATUS,
-        activity=activity
-    )
+    # Apply the activity with a try-except block to catch any errors
+    try:
+        await client.change_presence(status=config.STATUS, activity=activity)  # Ensure no unsupported arguments are passed
+    except Exception as e:
+        console.print(f"[bold #FF5555]Failed to apply activity settings: {str(e)}[/bold #FF5555]", justify="center")
+        console.print("[#FFCC00]Attempting to set status without activity...[/]", justify="center")
+        
+        # Try again with just status in case the activity is causing issues
+        try:
+            await client.change_presence(status=config.STATUS)  # Only set status
+            console.print("[#99AAB5]Status applied successfully without activity.[/]", justify="center")
+        except Exception as e2:
+            console.print(f"[bold #FF5555]Failed to apply status: {str(e2)}[/bold #FF5555]", justify="center")
 
+    console.print("\n", justify="center")  # Add more spacing
     login_message = Text.assemble(
         ("Logged in as ", Style(color="#7289DA", bold=True)),
         (f"{client.user}", Style(color="#99AAB5", bold=True))  # lighter blue/gray for username
@@ -206,6 +234,9 @@ async def on_ready():
         width=60
     )
     console.print(panel, justify="center")
+    
+    # Add confirmation that the bot is ready and running with distinctive styling
+    console.print("\n[bold #5865F2]Self Bot is ready and running! Press Ctrl+C to exit.[/bold #5865F2]", justify="center")
 
 try:
     # If running on Replit, start the keepalive server
@@ -243,6 +274,12 @@ try:
                 
             # Replace the token line while preserving format
             updated_content = config_content.replace('TOKEN = "YOUR_TOKEN"', f'TOKEN = "{user_token}"')
+            # Also handle the case where the token has been replaced before
+            if updated_content == config_content:
+                # Try to find the TOKEN line with regex pattern
+                import re
+                token_pattern = re.compile(r'TOKEN\s*=\s*"[^"]*"')
+                updated_content = token_pattern.sub(f'TOKEN = "{user_token}"', config_content)
             
             with open('./config.py', 'w') as file:
                 file.write(updated_content)
@@ -251,7 +288,10 @@ try:
             config.TOKEN = user_token
         except Exception as e:
             console.print(f"[bold #FF5555]Failed to update config.py: {str(e)}[/bold #FF5555]", justify="center")
-            
+            console.print("[#99AAB5]Continuing with provided token for this session only.[/]", justify="center")
+            # Continue with the token provided in input even if saving fails
+            config.TOKEN = user_token
+
     client.run(config.TOKEN)
 except discord.LoginFailure:
     error_message = Text.assemble(
