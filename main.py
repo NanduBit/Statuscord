@@ -8,6 +8,9 @@ from rich.align import Align
 from rich.text import Text
 from rich.style import Style
 
+# Import keepalive if running on Replit
+if config.REPLIT:
+    from keepalive import keep_alive
 
 # Completely disable all logging from all libraries
 
@@ -205,6 +208,11 @@ async def on_ready():
     console.print(panel, justify="center")
 
 try:
+    # If running on Replit, start the keepalive server
+    if config.REPLIT:
+        keep_alive()
+        console.print("[#99AAB5]Keepalive server started for Replit 24/7 operation[/]", justify="center")
+    
     # Check if token is default and prompt for input if needed
     if config.TOKEN == "YOUR_TOKEN":
         console.print("\n[bold #FFCC00]Token not configured in config.py[/bold #FFCC00]", justify="center")

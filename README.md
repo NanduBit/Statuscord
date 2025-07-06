@@ -51,21 +51,58 @@ You will need an user token in order to use this code. You can obtain it by doin
 
 ## 🛠️ Installation
 
+### · Setting Up a Virtual Environment (Recommended)
+
+Using a virtual environment helps isolate project dependencies and prevents conflicts with other Python projects.
+
+#### Windows
+```cmd
+# Navigate to your project directory
+cd path\to\project
+
+# Create a virtual environment
+python -m venv venv
+
+# Activate the virtual environment
+venv\Scripts\activate
+
+# Your terminal should now show (venv) at the beginning of the prompt
+```
+
+#### Linux/Mac
+```bash
+# Navigate to your project directory
+cd path/to/project
+
+# Create a virtual environment
+python3 -m venv venv
+
+# Activate the virtual environment
+source venv/bin/activate
+
+# Your terminal should now show (venv) at the beginning of the prompt
+```
+
 ### · Local Installation
 1. Install [Python](https://python.org/downloads) on your machine (Make sure you add it to [PATH](https://i.imgur.com/Ukl6HdQ.png))
 2. Clone this repository or download it as a ZIP file and extract it
 3. Open a terminal or command prompt in the project directory
-4. Run `pip install -r requirements.txt` to install the required dependencies
-5. Either modify the token in `config.py` or let the program prompt you for it when running
-6. Run the program with `python main.py`
+4. Set up a virtual environment (recommended, see instructions above)
+5. Run `pip install -r requirements.txt` to install the required dependencies
+6. Either modify the token in `config.py` or let the program prompt you for it when running
+7. Run the program with `python main.py`
 
 ### · 24/7 Hosting Options
 
 #### Replit
 1. Create a new Python repl on [Replit](https://replit.com)
 2. Upload the project files into the repl
-3. Run the repl and follow the prompts
-4. Add your repl URL to an uptime monitor (like [UptimeRobot](https://uptimerobot.com/)) to keep it running 24/7
+3. Open `config.py` and set `REPLIT = True` to enable the keepalive server
+4. Run the repl and follow the prompts
+5. Add your repl URL to an uptime monitor (like [UptimeRobot](https://uptimerobot.com/)) to keep it running 24/7
+   - Use the URL provided by Replit (e.g., `https://your-repl-name.yourusername.repl.co`)
+   - Set the monitoring type to HTTP(s) and check every 5 minutes
+   - This will ping your keepalive server periodically to prevent Replit from sleeping
 
 #### VPS/Cloud Hosting
 1. Deploy the code to your VPS or cloud instance

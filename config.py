@@ -12,3 +12,6 @@ ACTIVITY = {
     "name": "Leageue of Legends",  # Replace with your activity name
     "url": "https://twitch.tv/yourchannel"  # Replace with your stream URL, this is only applicable in "streaming" mode"
 }
+
+# Set to True if running on Replit to enable the keepalive server
+REPLIT = False
