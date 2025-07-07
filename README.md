@@ -1,7 +1,7 @@
 <div id="NanduBit" align="center">
     <h1>Statuscord - Python</h1>
     <p>Make Your Discord Account 24/7 Online with Custom Status!</p>
-    <a href="https://github.com/NanduBit/Statuscord/blob/main/LICENSE"><img src="https://img.shields.io/github/license/NanduBit/Status-Discord?style=for-the-badge"></a>
+    <a href="https://github.com/NanduBit/Statuscord/blob/main/LICENSE"><img src="https://img.shields.io/github/license/NanduBit/Statuscord?style=for-the-badge"></a>
     <a href="https://github.com/NanduBit"><img src="https://img.shields.io/badge/GITHUB-NanduBit-7289DA?style=for-the-badge"></a>
     <br>
     <img src="https://i.imgur.com/N61T21L.png" height="210">
